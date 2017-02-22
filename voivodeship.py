@@ -1,21 +1,49 @@
 import csv
 
-class City:
+class Voivodeship:
 
-    all_area = []
-
-    def __init__(self, name, type_area, voivodeship):
+    def __init__(self, name, type_area, voivodeship,):
         self.name = name
         self.type_area = type_area
         self.voivodeship = voivodeship
 
+class Providane(Voivodeship):
+
+
+    def __init__(self, name, type_area, voivodeship,community):
+        Voivodeship.__init__(self,name,type_area,voivodeship)
+        self.community = community
+
+
+class City:
+
+    all_area = []
+
+    def __init__(self, name, type_area, voivodeship,community, county, county_kind):
+        self.name = name
+        self.type_area = type_area
+        self.voivodeship = voivodeship
+        self.community = community
+        self.county = county
+        self.county_kind = county_kind
+
     @classmethod
     def data_reader(cls, filename):
         with open(filename, "r") as f:
+            next(f)
             data_string = csv.reader(f, delimiter="\t")
             for line in data_string:
-                if line[3].isdigit():
-                    c = City(line[4], line[5], line[0])
+
+                if line[1] == '':
+                    V = Voivodeship(line[4], line[5], line[0])
+
+                #elif line[2] == '' and line[3] == '':
+                #    P = Providane(line[4],line[5],line[0],line[1])
+                #   print(P)
+                #   cls.all_area.append(P)
+
+                elif line[3].isdigit():
+                    c = City(line[4], line[5], line[0], line[1], line[2], line[3])
                     cls.all_area.append(c)
 
         return cls.all_area
@@ -82,9 +110,11 @@ class City:
     @classmethod
     def searching_f(cls, user_input):
         searching_list=[]
-        for item in cls.all_area:
-            if user_input in item.name:
-                searching_list.append([item.name, item.type_area])
+        for city in cls.all_area:
+            if (user_input in city.name) and (city not in searching_list) :
+                searching_list.append([city.name, city.type_area])
         searching_list.sort(key=lambda x: x[0]+x[1])
+
         return searching_list
+
 
